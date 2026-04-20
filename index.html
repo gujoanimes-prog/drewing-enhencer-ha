@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Optional: Supabase user id when backend has Supabase credits enabled (?user_id= on URL also works). -->
+    <meta name="drawing-enhancer-user-id" content="" />
+    <title>AI Drawing Enhancer</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <main class="app-shell" id="app-root" aria-live="polite">
+      <section class="glass-card">
+        <header class="hero">
+          <h1>AI Drawing Enhancer</h1>
+          <p>Enhance sketches and artwork with AI upscaling—built for embedding in any page.</p>
+        </header>
+
+        <nav class="tabs" role="tablist" aria-label="Tool sections">
+          <button type="button" class="tab-btn is-active" data-tab="generate" role="tab" aria-selected="true">
+            Generate Image
+          </button>
+          <button type="button" class="tab-btn" data-tab="upscale" role="tab" aria-selected="false">
+            Enhance Drawing
+          </button>
+        </nav>
+
+        <section id="panel-generate" class="tab-panel" role="tabpanel">
+          <label class="field-label" for="prompt-input">Prompt</label>
+          <textarea
+            id="prompt-input"
+            class="prompt-input"
+            rows="4"
+            placeholder="Describe the image you want (e.g. watercolor city skyline at sunset)"
+            maxlength="2000"
+          ></textarea>
+          <button type="button" id="generate-btn" class="primary-btn">Generate Image</button>
+
+          <div id="generate-loading" class="loading hidden" aria-hidden="true">
+            <div class="spinner"></div>
+            <p>Generating image…</p>
+          </div>
+
+          <div id="generate-result-wrap" class="result-block hidden">
+            <h2>Result</h2>
+            <div class="result-image-frame">
+              <img
+                id="generate-result-img"
+                class="result-img"
+                alt="Generated image"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+            <div class="result-actions">
+              <button type="button" id="generate-download" class="secondary-btn">Download PNG</button>
+            </div>
+          </div>
+        </section>
+
+        <section id="panel-upscale" class="tab-panel hidden" role="tabpanel" hidden>
+          <div id="drop-zone" class="drop-zone">
+            <input id="file-input" type="file" accept="image/*" hidden />
+            <p class="drop-title">Drag and drop your drawing</p>
+            <p class="drop-subtitle">or click to upload</p>
+          </div>
+
+          <div class="scale-row">
+            <label class="field-label" for="scale-select">Upscale factor</label>
+            <select id="scale-select" class="select-input">
+              <option value="2">2×</option>
+              <option value="4" selected>4×</option>
+            </select>
+          </div>
+
+          <div id="preview-wrapper" class="preview-wrapper hidden">
+            <h2>Original</h2>
+            <div class="result-image-frame">
+              <img id="original-preview" alt="Original image preview" loading="lazy" decoding="async" />
+            </div>
+          </div>
+
+          <button type="button" id="upscale-btn" class="primary-btn" disabled>Enhance Drawing</button>
+
+          <div id="upscale-loading" class="loading hidden" aria-hidden="true">
+            <div class="spinner"></div>
+            <p>Enhancing your image…</p>
+          </div>
+
+          <div class="suggestions">
+            <h3>Ideas</h3>
+            <div class="suggestion-grid">
+              <article class="suggestion-card">Clean up rough sketches</article>
+              <article class="suggestion-card">Sharpen anime or line art</article>
+              <article class="suggestion-card">Recover blurry photos</article>
+              <article class="suggestion-card">Prepare art for print</article>
+            </div>
+          </div>
+
+          <section id="upscale-results" class="results hidden">
+            <h2>Before / After</h2>
+            <div class="compare-grid">
+              <figure>
+                <figcaption>Original</figcaption>
+                <div class="result-image-frame">
+                  <img id="result-original" alt="Original" loading="lazy" decoding="async" />
+                </div>
+              </figure>
+              <figure>
+                <figcaption>Enhanced</figcaption>
+                <div class="result-image-frame">
+                  <img id="result-upscaled" alt="Enhanced result" loading="lazy" decoding="async" />
+                </div>
+              </figure>
+            </div>
+            <div class="result-actions">
+              <button type="button" id="download-btn" class="secondary-btn">Download enhanced</button>
+              <button type="button" id="upscale-again-btn" class="ghost-btn">Enhance again</button>
+            </div>
+          </section>
+        </section>
+
+        <p id="error-message" class="error-message hidden" role="alert"></p>
+      </section>
+    </main>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
