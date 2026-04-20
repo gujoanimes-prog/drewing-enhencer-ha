@@ -46,6 +46,7 @@ const generateLoading = document.getElementById("generate-loading");
 const generateResultWrap = document.getElementById("generate-result-wrap");
 const generateResultImg = document.getElementById("generate-result-img");
 const generateDownload = document.getElementById("generate-download");
+const promptSuggestionsEl = document.getElementById("prompt-suggestions");
 
 const dropZone = document.getElementById("drop-zone");
 const fileInput = document.getElementById("file-input");
@@ -68,6 +69,19 @@ let upscaledImageUrl = "";
 let generateImageUrl = "";
 let busy = false;
 
+const PROMPT_SUGGESTIONS = [
+  "watercolor city skyline at sunset, soft light, ultra detailed",
+  "clean line art of a cute cat, white background, crisp ink",
+  "anime portrait, studio lighting, sharp focus, high detail",
+  "fantasy landscape, mountains and river, cinematic, 4k",
+  "logo icon, minimal flat vector style, high contrast",
+  "product photo on dark background, softbox lighting, realistic",
+  "pencil sketch of a vintage car, detailed shading",
+  "isometric illustration of a modern workspace, clean, bright",
+  "cyberpunk street at night, neon reflections, rain, ultra detailed",
+  "children's book illustration, warm colors, friendly characters"
+];
+
 function resetError() {
   errorEl.textContent = "";
   errorEl.classList.add("hidden");
@@ -89,6 +103,11 @@ function setBusy(loading) {
   scaleSelect.disabled = loading;
   fileInput.disabled = loading;
   dropZone.classList.toggle("is-disabled", loading);
+  if (promptSuggestionsEl) {
+    promptSuggestionsEl.querySelectorAll("button").forEach((b) => {
+      b.disabled = loading;
+    });
+  }
 }
 
 function bindImageError(img, label) {
@@ -102,12 +121,73 @@ bindImageError(resultUpscaled, "Enhanced image");
 bindImageError(originalPreview, "Preview");
 bindImageError(resultOriginal, "Original");
 
+function scoreSuggestion(query, suggestion) {
+  const q = query.trim().toLowerCase();
+  if (!q) return 1;
+  const s = suggestion.toLowerCase();
+  if (s.startsWith(q)) return 5;
+  if (s.includes(q)) return 3;
+  const parts = q.split(/\s+/).filter(Boolean);
+  if (!parts.length) return 1;
+  let hits = 0;
+  for (const p of parts) if (s.includes(p)) hits += 1;
+  return hits;
+}
+
+function renderPromptSuggestions() {
+  if (!promptSuggestionsEl) return;
+
+  const query = promptInput.value || "";
+  const scored = PROMPT_SUGGESTIONS.map((text) => ({
+    text,
+    score: scoreSuggestion(query, text)
+  }))
+    .filter((x) => x.score > 0)
+    .sort((a, b) => b.score - a.score);
+
+  const top = (query.trim() ? scored : scored).slice(0, 8).map((x) => x.text);
+  promptSuggestionsEl.innerHTML = "";
+
+  if (!top.length) {
+    const empty = document.createElement("div");
+    empty.className = "live-suggestions__empty";
+    empty.textContent = "No suggestions yet. Keep typing…";
+    promptSuggestionsEl.appendChild(empty);
+    return;
+  }
+
+  top.forEach((text) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "suggestion-pill";
+    btn.textContent = text;
+    btn.disabled = busy;
+    btn.addEventListener("click", () => {
+      if (busy) return;
+      promptInput.value = text;
+      promptInput.focus();
+      renderPromptSuggestions();
+    });
+    promptSuggestionsEl.appendChild(btn);
+  });
+}
+
+let suggestionRaf = 0;
+promptInput.addEventListener("input", () => {
+  if (suggestionRaf) cancelAnimationFrame(suggestionRaf);
+  suggestionRaf = requestAnimationFrame(() => {
+    renderPromptSuggestions();
+  });
+});
+
 function normalizeError(err, fallback) {
   if (err instanceof TypeError && err.message === "Failed to fetch") {
     return "Could not reach the API. Confirm API_URL in script.js matches your live Render URL and that the service is up (check browser Network tab for CORS or DNS errors).";
   }
   return err?.message || fallback;
 }
+
+renderPromptSuggestions();
 
 async function downloadImageUrl(url, filename) {
   if (!url) {

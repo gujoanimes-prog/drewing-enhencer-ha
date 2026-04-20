@@ -29,20 +29,22 @@ body {
 
 .app-shell {
   width: 100%;
-  max-width: 920px;
-  margin: 0 auto;
-  padding: clamp(1rem, 4vw, 2.5rem) clamp(0.75rem, 3vw, 1.25rem);
+  max-width: none;
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
 }
 
 .glass-card {
+  width: 100%;
+  min-height: 100dvh;
   background: linear-gradient(165deg, rgba(30, 41, 59, 0.55) 0%, rgba(15, 23, 42, 0.92) 100%);
   border: 1px solid rgba(148, 163, 184, 0.22);
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.04) inset,
     0 24px 48px rgba(2, 6, 23, 0.55);
   backdrop-filter: blur(12px);
-  border-radius: 20px;
+  border-radius: 0;
   padding: clamp(1rem, 3vw, 1.35rem);
 }
 
@@ -134,6 +136,71 @@ body {
 .prompt-input:disabled {
   opacity: 0.65;
   cursor: not-allowed;
+}
+
+.live-suggestions {
+  margin: 0.6rem 0 0.35rem;
+  padding: 0.7rem 0.75rem;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: rgba(2, 6, 23, 0.45);
+}
+
+.live-suggestions__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.6rem;
+}
+
+.live-suggestions__title {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.live-suggestions__hint {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.live-suggestions__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.suggestion-pill {
+  appearance: none;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  background: rgba(15, 23, 42, 0.75);
+  color: var(--text);
+  padding: 0.45rem 0.65rem;
+  border-radius: 999px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.9rem;
+  line-height: 1.2;
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.05s ease;
+}
+
+.suggestion-pill:hover:not(:disabled) {
+  border-color: rgba(37, 99, 235, 0.65);
+  background: rgba(37, 99, 235, 0.14);
+}
+
+.suggestion-pill:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.suggestion-pill:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.live-suggestions__empty {
+  color: var(--muted);
+  font-size: 0.9rem;
 }
 
 .scale-row {

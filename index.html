@@ -6,7 +6,7 @@
     <!-- Optional: Supabase user id when backend has Supabase credits enabled (?user_id= on URL also works). -->
     <meta name="drawing-enhancer-user-id" content="" />
     <title>AI Drawing Enhancer</title>
-    <link rel="stylesheet" href="./style.css" />
+    <link rel="stylesheet" href="./style.css?v=20260420" />
   </head>
   <body>
     <main class="app-shell" id="app-root" aria-live="polite">
@@ -34,6 +34,13 @@
             placeholder="Describe the image you want (e.g. watercolor city skyline at sunset)"
             maxlength="2000"
           ></textarea>
+          <div class="live-suggestions" aria-label="Live suggestions">
+            <div class="live-suggestions__head">
+              <span class="live-suggestions__title">Suggestions</span>
+              <span class="live-suggestions__hint">Type to filter, click to use</span>
+            </div>
+            <div id="prompt-suggestions" class="live-suggestions__list" role="list"></div>
+          </div>
           <button type="button" id="generate-btn" class="primary-btn">Generate Image</button>
 
           <div id="generate-loading" class="loading hidden" aria-hidden="true">
@@ -124,6 +131,6 @@
       </section>
     </main>
 
-    <script src="./script.js"></script>
+    <script src="./script.js?v=20260420"></script>
   </body>
 </html>
